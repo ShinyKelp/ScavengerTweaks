@@ -17,7 +17,7 @@ using Random = UnityEngine.Random;
 namespace ScavengerTweaks
 {
 
-    [BepInPlugin("ShinyKelp.ScavengerTweaks", "Scavenger Tweaks", "1.0.0")]
+    [BepInPlugin("ShinyKelp.ScavengerTweaks", "Scavenger Tweaks", "1.1.0")]
     public partial class ScavengerTweaksMod : BaseUnityPlugin
     {
         RainWorldGame game;
@@ -125,7 +125,7 @@ namespace ScavengerTweaks
             {
                 if (self.parent.creatureTemplate.type == CreatureTemplate.Type.Scavenger)
                     Scav_InitGearUp(self);
-                else if (self.parent.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite)
+                else if (self.parent.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.ScavengerElite)
                     EliteScav_InitGearUp(self);
                 else if (self.parent.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing)
                     KingScav_InitGearUp(self);
@@ -188,7 +188,7 @@ namespace ScavengerTweaks
             //Gooieduck
             if(spacesLeft > 0 && Random.value < 0.04f * dominance)
             {
-                AbstractConsumable abstractConsumable2 = new AbstractConsumable(self.world, MoreSlugcatsEnums.AbstractObjectType.GooieDuck, null, self.parent.pos, self.world.game.GetNewID(), -1, -1, null);
+                AbstractConsumable abstractConsumable2 = new AbstractConsumable(self.world, DLCSharedEnums.AbstractObjectType.GooieDuck, null, self.parent.pos, self.world.game.GetNewID(), -1, -1, null);
                 abstractConsumable2.isConsumed = true;
                 self.world.GetAbstractRoom(self.parent.pos).AddEntity(abstractConsumable2);
                 new AbstractPhysicalObject.CreatureGripStick(self.parent, abstractConsumable2, spacesLeft-1, true);
@@ -283,7 +283,7 @@ namespace ScavengerTweaks
             float dominance = self.parent.personality.dominance;
 
             //One glowweed, guaranteed for the video (will be chance later).
-            AbstractConsumable abstractConsumable = new AbstractConsumable(self.world, MoreSlugcatsEnums.AbstractObjectType.GlowWeed, null, self.parent.pos, self.world.game.GetNewID(), -1, -1, null);
+            AbstractConsumable abstractConsumable = new AbstractConsumable(self.world, DLCSharedEnums.AbstractObjectType.GlowWeed, null, self.parent.pos, self.world.game.GetNewID(), -1, -1, null);
             self.world.GetAbstractRoom(self.parent.pos).AddEntity(abstractConsumable);
             new AbstractPhysicalObject.CreatureGripStick(self.parent, abstractConsumable, spacesLeft - 1, true);
             spacesLeft--;
@@ -379,13 +379,13 @@ namespace ScavengerTweaks
             orig(ref self, ID);
             if (IsConstructingScav)
             {
-                
-                self.aggression += options.aggression.Value;
-                self.bravery += options.bravery.Value;
-                self.dominance += options.dominance.Value;
-                self.energy += options.energy.Value;
-                self.nervous += options.nervous.Value;
-                self.sympathy += options.sympathy.Value;
+                System.Random random = new System.Random();
+                self.aggression += (float)random.NextDouble() * Mathf.Abs(options.aggression.Value) * Mathf.Sign(options.aggression.Value);
+                self.bravery += (float)random.NextDouble() * Mathf.Abs(options.bravery.Value) * Mathf.Sign(options.bravery.Value);
+                self.dominance += (float)random.NextDouble() * Mathf.Abs(options.dominance.Value) * Mathf.Sign(options.dominance.Value);
+                self.energy += (float)random.NextDouble() * Mathf.Abs(options.energy.Value) * Mathf.Sign(options.energy.Value);
+                self.nervous += (float)random.NextDouble() * Mathf.Abs(options.nervous.Value) * Mathf.Sign(options.nervous.Value);
+                self.sympathy += (float)random.NextDouble() * Mathf.Abs(options.sympathy.Value) * Mathf.Sign(options.sympathy.Value);
 
                 if (self.aggression < 0.01f)
                     self.aggression = 0.01f;
@@ -413,12 +413,13 @@ namespace ScavengerTweaks
         private void ModifyScavengerCombatSkills(On.Scavenger.orig_SetUpCombatSkills orig, Scavenger self)
         {
             orig(self);
-            
-            self.dodgeSkill += options.dodgeSkill.Value;
-            self.meleeSkill += options.meleeSkill.Value;
-            self.midRangeSkill += options.midRangeSkill.Value;
-            self.blockingSkill += options.blockingSkill.Value;
-            self.reactionSkill += options.reactionSkill.Value;
+
+            System.Random random = new System.Random();
+            self.dodgeSkill += (float)random.NextDouble() * Mathf.Abs(options.dodgeSkill.Value) * Mathf.Sign(options.dodgeSkill.Value);
+            self.meleeSkill += (float)random.NextDouble() * Mathf.Abs(options.meleeSkill.Value) * Mathf.Sign(options.meleeSkill.Value);
+            self.midRangeSkill += (float)random.NextDouble() * Mathf.Abs(options.midRangeSkill.Value) * Mathf.Sign(options.midRangeSkill.Value);
+            self.blockingSkill += (float)random.NextDouble() * Mathf.Abs(options.blockingSkill.Value) * Mathf.Sign(options.blockingSkill.Value);
+            self.reactionSkill += (float)random.NextDouble() * Mathf.Abs(options.reactionSkill.Value) * Mathf.Sign(options.reactionSkill.Value);
 
             if (self.dodgeSkill < 0.01f)
                 self.dodgeSkill = 0.01f;
@@ -458,7 +459,7 @@ namespace ScavengerTweaks
             else IsConstructingScav = false;
             if (creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing)
             {
-                AbstractCreature abs = new AbstractCreature(world, StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite), realizedCreature, pos, ID);
+                AbstractCreature abs = new AbstractCreature(world, StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite), realizedCreature, pos, ID);
                 orig(self, world, creatureTemplate, realizedCreature, pos, abs.ID);
             }
             else orig(self, world, creatureTemplate, realizedCreature, pos, ID);
@@ -471,7 +472,7 @@ namespace ScavengerTweaks
             return (orig(self, obj) || obj is FireEgg);
         }
 
-        private int ThrowBugSpearAndFireEgg(On.ScavengerAI.orig_WeaponScore orig, ScavengerAI self, PhysicalObject obj, bool pickupDropInsteadOfWeaponSelection)
+        private int ThrowBugSpearAndFireEgg(On.ScavengerAI.orig_WeaponScore orig, ScavengerAI self, PhysicalObject obj, bool pickupDropInsteadOfWeaponSelection, bool reallyWantsSpear=false)
         {
             if (obj is FireEgg egg )
             {
@@ -510,7 +511,7 @@ namespace ScavengerTweaks
                 else
                     return 4;
             }
-            else return orig(self, obj, pickupDropInsteadOfWeaponSelection);
+            else return orig(self, obj, pickupDropInsteadOfWeaponSelection, reallyWantsSpear);
         }
 
         private int CollectBugSpearAndFireEgg(On.ScavengerAI.orig_CollectScore_PhysicalObject_bool orig, ScavengerAI self, PhysicalObject obj, bool weaponFiltered)
@@ -591,15 +592,15 @@ namespace ScavengerTweaks
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).usesRegionTransportation = false;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).roamBetweenRoomsChance = -1f;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).usesNPCTransportation =
-                StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite).usesNPCTransportation;
+                StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite).usesNPCTransportation;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).shortcutAversion =
-                StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite).shortcutAversion;
+                StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite).shortcutAversion;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).mappedNodeTypes =
-                StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite).mappedNodeTypes;
+                StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite).mappedNodeTypes;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).pathingPreferencesConnections =
-                StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite).pathingPreferencesConnections;
+                StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite).pathingPreferencesConnections;
             StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing).NPCTravelAversion =
-                StaticWorld.GetCreatureTemplate(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite).NPCTravelAversion;
+                StaticWorld.GetCreatureTemplate(DLCSharedEnums.CreatureTemplateType.ScavengerElite).NPCTravelAversion;
         }
 
         private void ScavKingAbsAICanGoIntoPipes(On.ScavengerAbstractAI.orig_AbstractBehavior orig, ScavengerAbstractAI self, int time)
@@ -614,7 +615,7 @@ namespace ScavengerTweaks
                 !(self.parent.realizedCreature is null) && !(self.parent.realizedCreature.room is null) &&
                 self.parent.realizedCreature.room.abstractRoom.name != "LC_FINAL")
             {
-                self.parent.creatureTemplate.type = MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite;
+                self.parent.creatureTemplate.type = DLCSharedEnums.CreatureTemplateType.ScavengerElite;
                 orig(self, time);
                 self.parent.creatureTemplate.type = MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing;
             }
@@ -628,7 +629,7 @@ namespace ScavengerTweaks
             {
                 try
                 {
-                    self.scavenger.abstractCreature.creatureTemplate.type = MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite;
+                    self.scavenger.abstractCreature.creatureTemplate.type = DLCSharedEnums.CreatureTemplateType.ScavengerElite;
                     orig(self);
                 }
                 finally
@@ -646,7 +647,7 @@ namespace ScavengerTweaks
             {
                 try
                 {
-                    self.scavenger.abstractCreature.creatureTemplate.type = MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite;
+                    self.scavenger.abstractCreature.creatureTemplate.type = DLCSharedEnums.CreatureTemplateType.ScavengerElite;
                     orig(self);
                 }
                 finally
@@ -674,11 +675,11 @@ namespace ScavengerTweaks
             c.Emit(OpCodes.Ldarg, 5);
             c.EmitDelegate<Func<World, CreatureTemplate, EntityID, EntityID>>((world, creatureTemplate, origID) =>
             {
-                if (!(world is null) && !(world.game is null) && !(creatureTemplate is null) && creatureTemplate.TopAncestor().type ==
+                if (hasStrongScavs && !(world is null) && !(world.game is null) && !(creatureTemplate is null) && creatureTemplate.TopAncestor().type ==
                 CreatureTemplate.Type.Scavenger)
                 {
                     float chance = ScavengerTweaksOptions.StrongScavChance.Value / 100f;
-                    if (creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite)
+                    if (creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.ScavengerElite)
                         chance = ScavengerTweaksOptions.StrongEliteChance.Value / 100f;
                     if (creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing)
                         chance = 1f;
