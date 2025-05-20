@@ -38,6 +38,7 @@ namespace ScavengerTweaks
         public Configurable<float> nervous;// = instance.config.Bind<float>("nervous", 0f, new ConfigAcceptableRange<float>(0f, 10f));
         public Configurable<float> sympathy;// = instance.config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(0f, 10f));
         public Configurable<bool> scavSenses;// = instance.config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(0f, 10f));
+        public Configurable<bool> snitchingDisciples;// = instance.config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(0f, 10f));
         private Configurable<string> comboBoxConfig;
         private bool hasStrongScavs;
         private OpComboBox gearComboBox;
@@ -71,6 +72,7 @@ namespace ScavengerTweaks
 
         public static Configurable<int> StrongScavChance, StrongEliteChance;
         public static Configurable<bool> ScavSenses;
+        public static Configurable<bool> SnitchingDisciples;
 
         public ScavengerTweaksOptions(bool hasStrongScavs = false)
         {
@@ -87,7 +89,9 @@ namespace ScavengerTweaks
             nervous = config.Bind<float>("nervous", 0f, new ConfigAcceptableRange<float>(-1f, 1f));
             sympathy = config.Bind<float>("sympathy", 0f, new ConfigAcceptableRange<float>(-1f, 1f));
             scavSenses = config.Bind<bool>("scavSenses", false);
+            snitchingDisciples = config.Bind<bool>("snitchingDisciples", false);
             ScavSenses = scavSenses;
+            SnitchingDisciples = snitchingDisciples;
             ConfigAcceptableBase info = null;
             comboBoxConfig = config.Bind<string>("GearChoice", "Vanilla", info);
             this.hasStrongScavs = hasStrongScavs;
@@ -153,12 +157,16 @@ namespace ScavengerTweaks
                 new OpLabel(315f, 170f, "Sympathy"),
                 new OpFloatSlider(sympathy,new Vector2(320f,140f), 200),
                 new OpLabel(15f, 145f, "Scav Senses"),
-                new OpCheckBox(scavSenses, 100f, 142f){
+                new OpCheckBox(scavSenses, 105f, 142f){
                     description = "Scavengers will always sense spears flying at them,\n" +
                     "making their dodges a lot better."
                 },
-                 new OpLabel(15f, 115f, "Variable health"),
-                new OpCheckBox(variableHealth, 100f, 112f){
+                new OpLabel(15f, 115f, "Disciple Snitch"),
+                new OpCheckBox(snitchingDisciples, 105f, 112f){
+                    description = "Scavenger Disciples will warn other scavengers of creatures they detect with echolocation."
+                },
+                new OpLabel(15f, 85f, "Variable health"),
+                new OpCheckBox(variableHealth, 105f, 82f){
                     description = "Scavenger health will vary depending on certain personality traits."
                 },
 

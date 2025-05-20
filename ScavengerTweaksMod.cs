@@ -82,6 +82,7 @@ namespace ScavengerTweaks
                 On.ScavengerAbstractAI.IsSpearExplosive += ModifyExplosiveSpearChance;
                 IL.AbstractCreature.ctor += StrongScavReplacementChance;//*/
                 On.Scavenger.Violence += Scavenger_Violence;
+                On.Scavenger.PingReturnInfo += DiscipleSnitches;
 
                 Debug.Log("Set all hooks for ScavengerTweaks!");
 
@@ -94,6 +95,30 @@ namespace ScavengerTweaks
             {
                 Logger.LogError(ex);
                 throw;
+            }
+        }
+
+        private void DiscipleSnitches(On.Scavenger.orig_PingReturnInfo orig, Scavenger self, PhysicalObject pObj, bool isCreature)
+        {
+            orig(self, pObj, isCreature);
+            if (ScavengerTweaksOptions.SnitchingDisciples.Value)
+            {
+                Creature pCrit = (isCreature && pObj is Creature) ? pObj as Creature : null;
+                foreach (AbstractCreature crit in self.room.abstractRoom.creatures)
+                {
+                    if (crit.realizedCreature != null && crit.realizedCreature is Scavenger scav && scav != self)
+                    {
+                        if (pCrit != null)
+                        {
+                            scav.AI.tracker.AddTrackedCreature(pCrit.abstractCreature);
+                            scav.AI.tracker.SeeCreature(pCrit.abstractCreature);
+                        }
+                        else
+                        {
+                            scav.AI.itemTracker.SeeItem(pObj.abstractPhysicalObject);
+                        }
+                    }
+                }
             }
         }
 
@@ -129,6 +154,8 @@ namespace ScavengerTweaks
                     EliteScav_InitGearUp(self);
                 else if (self.parent.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing)
                     KingScav_InitGearUp(self);
+                else if (SelectedLevel != ScavGearLevels.EMPTY) //In this case, it's a templar or a disciple. For now we don't modify their gear.
+                    orig(self);
             }
             else
                 orig(self);
@@ -431,21 +458,10 @@ namespace ScavengerTweaks
                 self.blockingSkill = 0.01f;
             if (self.reactionSkill < 0.01f)
                 self.reactionSkill = 0.01f;
-
-            //*/
-
-            /*
-            self.dodgeSkill += 0.4f;
-            self.meleeSkill += 10f;
-            self.midRangeSkill += 0.7f;
-            self.blockingSkill += 4f;
-            self.reactionSkill += 1000f;
-            //*/
         }
 
         private void StrongKing(On.AbstractCreature.orig_ctor orig, AbstractCreature self, World world, CreatureTemplate creatureTemplate, Creature realizedCreature, WorldCoordinate pos, EntityID ID)
         {
-
             if (world is null || world.game is null)
             {
                 Debug.Log("DETECTED NULL CREATURE ATTEMPT. PREVENTING CRASH.");
